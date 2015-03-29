@@ -1,0 +1,11 @@
+# ChatTranslator v1.0 Configuration File
+# Created by Samuel98 (Formally known as SamzRulez)
+# http://www.samuelzcloud.co.uk/
+# http://dev.bukkit.org/profiles/SamzRulez/bukkit-plugins/
+# http://www.spigotmc.org/members/samzrulez.37307/#resources
+
+DefaultLanguage: ENGLISH
+
+LogMessages: true
+
+NoPermission: '&cYou do not have the correct permissions.'

@@ -1,0 +1,31 @@
+name: ChatTranslator
+version: 1.0
+author: Samuel98 (SamzRulez)
+website: http://www.samuelzcloud.co.uk/
+description: Chat Translation plugin which uses Google Translate.
+
+main: uk.co.samuelzcloud.dev.plugins.ChatTranslator.ChatTranslator
+
+commands:
+  ChatTranslator:
+    description: View and maintain the plugin information.
+    usage: /<command> <Info | Save | Load>
+    aliases: []
+  Language:
+    description: Choose your preffered language.
+    usage: /<command>
+    aliases: [Lang, Chat]
+
+permissions:
+  ChatTranslator.Language:
+    description: Permission to change your preffered language.
+    default: true
+  ChatTranslator.Info:
+    description: Permission to view the plugin information.
+    default: true
+  ChatTranslator.Load:
+    description: Permission to force a load of configs.
+    default: op
+  ChatTranslator.Save:
+    description: Permission to force a save of configs.
+    default: op

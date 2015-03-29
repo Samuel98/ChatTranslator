@@ -1,0 +1,17 @@
+# ChatTranslator v1.0 Configuration File
+# Created by Samuel98 (Formally known as SamzRulez)
+# http://www.samuelzcloud.co.uk/
+# http://dev.bukkit.org/profiles/SamzRulez/bukkit-plugins/
+# http://www.spigotmc.org/members/samzrulez.37307/#resources
+
+# The default language to use when a player has not yet choosen.
+# Default = ENGLISH, must all be in uppercase.
+DefaultLanguage: ENGLISH
+
+# Wether or not the plugin should log messages to the console.
+# Default = true
+LogMessages: true
+
+# Message to display when player does not have the correct permission.
+# Default = &cYou do not have the correct permissions.
+NoPermission: '&cYou do not have the correct permissions.'
