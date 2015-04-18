@@ -9,7 +9,7 @@ import uk.co.samuelzcloud.dev.plugins.ChatTranslator.ChatTranslator;
 
 /**
  * Created by Samuel on 29/03/2015.
- * uk.co.samuelzcloud.dev.plugins.ChatTranslator.Executors - LExecutor
+ * uk.co.samuelzcloud.dev.plugins.ChatTranslator.Listeners - LExecutor
  */
 public class LExecutor implements CommandExecutor {
 
@@ -41,12 +41,12 @@ public class LExecutor implements CommandExecutor {
         Inventory inv = this.plugin.getPluginServer().createInventory(player, 54, this.plugin.getLog().colour("&bChoose your language..."));
 
         // Add items.
-        inv.setContents(this.plugin.createSet1(inv).getContents());
+        inv.setContents(this.plugin.createSet(inv).getContents());
 
         player.openInventory(inv);
         this.plugin.getPlayersViewing().put(player.getUniqueId(), inv);
 
-        this.plugin.getLog().sendFormattedMessage(player, "&bOpening...");
+        //this.plugin.getLog().sendFormattedMessage(player, "&bOpening...");
 
         return true;
     }

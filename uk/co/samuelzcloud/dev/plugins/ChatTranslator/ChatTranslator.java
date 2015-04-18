@@ -13,9 +13,8 @@ import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Executors.LExecutor;
 import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Listeners.ChatListener;
 import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Listeners.ClickListener;
 import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Listeners.JoinListener;
-import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Utilities.CustomLogger;
-import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Utilities.Languages;
-import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Utilities.Players;
+import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Tasks.ThreadTask;
+import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Utilities.*;
 
 import java.io.File;
 import java.util.Arrays;
@@ -34,21 +33,21 @@ public class ChatTranslator extends JavaPlugin {
 
     private CustomLogger log;
     private Players players;
+    private FTP ftp;
 
-    private File pluginFolder, playersFile, messagesFile;
+    private File pluginFolder, playersFile;
 
     private HashMap<UUID, Inventory> playersViewing;
 
     @Override
     public void onEnable() {
-        // Copy the default configuration file to plugins folder and save it.
-        this.getConfig().options().copyDefaults(true);
-        this.saveConfig();
+        if (!(new File(this.pluginFolder, "config.yml").exists())) {
+            this.saveResource("config.yml", false);
+        }
 
         // Initiate the pluginFolder, playersFile and messagesFile.
         (this.pluginFolder = new File(this.getDataFolder().getAbsolutePath())).mkdirs();
         this.playersFile = new File(this.pluginFolder, "players.yml");
-        this.messagesFile = new File(this.pluginFolder, "messages.yml");
 
         // Initiate the Server and Plugin Manager variables.
         this.server = this.getServer();
@@ -58,9 +57,22 @@ public class ChatTranslator extends JavaPlugin {
         // Initiate the Custom Logger and Players variables.
         this.log = new CustomLogger(this);
         this.players = new Players(this);
+        this.ftp = new FTP();
 
         // Initiate the players viewing hash map.
         this.playersViewing = new HashMap<>();
+
+        if (this.getConfig().getString("API_Key").equalsIgnoreCase("NEED_TO_SET")) {
+            this.getLog().logInfo("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+            this.getLog().logWarning("You need to obtain an API KEY.");
+            this.getLog().logInfo("Check config file for more information.");
+            this.getLog().logInfo("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+
+            this.getManager().disablePlugin(this);
+            return;
+        } else {
+            Translate.setKey(this.getConfig().getString("API_Key"));
+        }
 
         // Define the ChatTranslator command executor.
         this.getCommand("ChatTranslator").setExecutor(new CTExecutor(this));
@@ -69,8 +81,21 @@ public class ChatTranslator extends JavaPlugin {
         // Register the Listeners.
         this.getManager().registerEvents(new ClickListener(this), this);
         this.getManager().registerEvents(new JoinListener(this), this);
-        this.getManager().registerEvents(new ChatListener(this), this);
 
+        if (this.getManager().getPlugin("Herochat") != null && this.getManager().getPlugin("Vault") != null) {
+            this.getManager().registerEvents(new ChatListener(this), this);
+        }
+
+        // Check dependencies
+        if (this.getManager().getPlugin("Herochat") == null || this.getManager().getPlugin("Vault") == null) {
+            this.getLog().logInfo("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+            this.getLog().logWarning("Herochat or Vault dependency not found, please install it.");
+            this.getLog().logInfo("ChatTranslator will be disabled until such times.");
+            this.getLog().logInfo("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+
+            this.getManager().disablePlugin(this);
+            return;
+        }
     }
 
     @Override
@@ -103,15 +128,13 @@ public class ChatTranslator extends JavaPlugin {
     public Players getPlayers() {
         return this.players;
     }
+    public FTP getFTP() {
+        return this.ftp;
+    }
 
     // Method to get the Players File variable.
     public File getPlayersFile() {
         return this.playersFile;
-    }
-
-    // Method to get the Messages Files variable.
-    public File getMessagesFile() {
-        return this.messagesFile;
     }
 
     // Method to get the players viewing hash map.
@@ -131,28 +154,17 @@ public class ChatTranslator extends JavaPlugin {
         return item;
     }
 
-    // Method which creates the first inventory set.
-    public Inventory createSet1(Inventory inv) {
+    // Method which creates the inventory set.
+    public Inventory createSet(Inventory inv) {
         inv.clear();
 
-        for (int i = 0; i < 45; i++) {
-            inv.setItem(i, this.createItem(Material.ENCHANTED_BOOK, 1, 0, "&b" + Languages.values()[i].getLangName(), new String[]{"&fIs this your preferred language?", "&fClick to change to it."}));
+        for (int i = 0; i < Language.values().length-1; i++) {
+            if (!Language.values()[i].getName().equalsIgnoreCase("DISABLED")) {
+                inv.setItem(i, this.createItem(Material.ENCHANTED_BOOK, 1, 0, "&b" + Language.values()[i].getName(), new String[]{"&bAliases: " + Language.values()[i].getCode().toUpperCase(), "&fIs this your preferred language?", "&fClick to change to it."}));
+            }
         }
 
-        inv.setItem(52, this.createItem(Material.BLAZE_ROD, 1, 0, "&bNext Set", new String[]{ "&fIs your preferred language not here?", "&fThen try the next set of languages!" }));
-        inv.setItem(53, this.createItem(Material.CARROT_STICK, 1, 0, "&bClose Menu", new String[]{ "&fCan't decide what language to use?", "&fNever mind. You can change it later!" }));
-        return inv;
-    }
-
-    // Method which creates the second inventory set.
-    public Inventory createSet2(Inventory inv) {
-        inv.clear();
-
-        for (int i = 0; i < 38; i++) {
-            inv.setItem(i, this.createItem(Material.ENCHANTED_BOOK, 1, 0, "&b" + Languages.values()[i+45].getLangName(), new String[]{"&fIs this your preferred language?", "&fClick to change to it."}));
-        }
-
-        inv.setItem(52, this.createItem(Material.BLAZE_ROD, 1, 0, "&bPrevious Set", new String[]{ "&fIs your preferred language not here?", "&fThen try the previous set of languages!" }));
+        inv.setItem(52, this.createItem(Material.BLAZE_ROD, 1, 0, "&bDisable", new String[]{ "&fIs your preferred language not here?", "&fThen don\'t worry, you do not have to use me!" }));
         inv.setItem(53, this.createItem(Material.CARROT_STICK, 1, 0, "&bClose Menu", new String[]{ "&fCan't decide what language to use?", "&fNever mind. You can change it later!" }));
         return inv;
     }

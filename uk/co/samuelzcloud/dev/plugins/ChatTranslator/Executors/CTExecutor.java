@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import uk.co.samuelzcloud.dev.plugins.ChatTranslator.ChatTranslator;
+import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Tasks.ThreadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.util.List;
 
 /**
  * Created by Samuel on 29/03/2015.
- * uk.co.samuelzcloud.dev.plugins.ChatTranslator.Executors - CTExecutor
+ * uk.co.samuelzcloud.dev.plugins.ChatTranslator.Listeners - CTExecutor
  */
 public class CTExecutor implements CommandExecutor {
 

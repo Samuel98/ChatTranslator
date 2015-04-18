@@ -1,11 +1,21 @@
-# ChatTranslator v1.0 Configuration File
-# Created by Samuel98 (Formally known as SamzRulez)
-# http://www.samuelzcloud.co.uk/
-# http://dev.bukkit.org/profiles/SamzRulez/bukkit-plugins/
-# http://www.spigotmc.org/members/samzrulez.37307/#resources
+#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
+#  Configuration file for "ChatTranslator v1.1"   #
+#       Created by Samuel Carr (Samuel98)         #
+#           http://samuelzcloud.co.uk/            #
+#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 
+## The default language to use when a player has not yet choosen. (Default: ENGLISH)
+# This is what language is displayed by default, it is reccomended you keep this English.
 DefaultLanguage: ENGLISH
 
+## Should the plugin log messages to the console? (Default: true)
+# This makes it easier to see what is going on.
 LogMessages: true
 
+## The message which is displayed to players without permissions. (Default: '&cYou do not have the correct permissions.')
+# It is reccomended you keep this something along the lines of insufficient permissions.
 NoPermission: '&cYou do not have the correct permissions.'
+
+## The API Key from Yandex Translator.
+# You can get a free key from: http://api.yandex.com/key/form.xml?service=trnsl
+API_Key: NEED_TO_SET

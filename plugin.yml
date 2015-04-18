@@ -1,8 +1,10 @@
 name: ChatTranslator
-version: 1.0
+version: 1.1
 author: Samuel98 (SamzRulez)
 website: http://www.samuelzcloud.co.uk/
-description: Chat Translation plugin which uses Google Translate.
+description: Chat Translation which is done by the free Yandex Translate API.
+
+softdepend: [Herochat, Vault]
 
 main: uk.co.samuelzcloud.dev.plugins.ChatTranslator.ChatTranslator
 
@@ -17,6 +19,14 @@ commands:
     aliases: [Lang, Chat]
 
 permissions:
+  ChatTranslator.Admin:
+    description: Permission to all features and commands.
+    default: op
+    children:
+    - ChatTranslator.Language: true
+    - ChatTranslator.Info: true
+    - ChatTranslator.Load: true
+    - ChatTranslator.Save: true
   ChatTranslator.Language:
     description: Permission to change your preffered language.
     default: true

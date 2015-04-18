@@ -8,10 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import uk.co.samuelzcloud.dev.plugins.ChatTranslator.ChatTranslator;
-import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Utilities.Languages;
+import uk.co.samuelzcloud.dev.plugins.ChatTranslator.Utilities.Language;
 
 /**
  * Created by Samuel on 29/03/2015.
@@ -47,7 +46,7 @@ public class ClickListener implements Listener {
         Material type = item.getType();
 
         // 0-45 Slot - Language Item
-        // 52 Slot - Previous/Next Set
+        // 52 Slot - Disable
         // 53 Slot - Close Menu
 
         if (event.getSlot() == event.getRawSlot()) {
@@ -56,46 +55,22 @@ public class ClickListener implements Listener {
             if (slot == this.plugin.getPlayersViewing().get(player.getUniqueId()).getSize() - 1 && this.plugin.getLog().strip(item.getItemMeta().getDisplayName()).equalsIgnoreCase("Close Menu")) {
                 // Close Menu
                 this.plugin.getLog().sendFormattedMessage(player, "&bYou can always change your preferred language later!");
-                player.closeInventory();
 
-            } else if (slot == this.plugin.getPlayersViewing().get(player.getUniqueId()).getSize() - 2 && this.plugin.getLog().strip(item.getItemMeta().getDisplayName()).equalsIgnoreCase("Next Set")) {
-                // Next Set
-                final Inventory inv = this.plugin.getPlayersViewing().get(player.getUniqueId());
-                inv.setContents(this.plugin.createSet2(inv).getContents());
-
-                player.closeInventory();
-                this.plugin.getPlayersViewing().remove(player.getUniqueId());
-
-                this.plugin.getScheduler().runTaskLater(this.plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        plugin.getPlayersViewing().put(player.getUniqueId(), inv);
-                        player.openInventory(inv);
-                    }
-                }, 2L);
-
-            } else if (slot == this.plugin.getPlayersViewing().get(player.getUniqueId()).getSize() - 2 && this.plugin.getLog().strip(item.getItemMeta().getDisplayName()).equalsIgnoreCase("Previous Set")) {
-                // Previous Set
-                final Inventory inv = this.plugin.getPlayersViewing().get(player.getUniqueId());
-                inv.setContents(this.plugin.createSet1(inv).getContents());
-
-                player.closeInventory();
-                this.plugin.getPlayersViewing().remove(player.getUniqueId());
-
-                this.plugin.getScheduler().runTaskLater(this.plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        plugin.getPlayersViewing().put(player.getUniqueId(), inv);
-                        player.openInventory(inv);
-                    }
-                }, 2L);
+            } else if (slot == this.plugin.getPlayersViewing().get(player.getUniqueId()).getSize() - 2 && this.plugin.getLog().strip(item.getItemMeta().getDisplayName()).equalsIgnoreCase("Disable")) {
+                // Set to None.
+                this.plugin.getLog().sendFormattedMessage(player, "&bYou can always check again for your language later!");
+                this.plugin.getPlayers().setLanguage(player.getUniqueId(), "DISABLED");
 
             } else if (type == Material.ENCHANTED_BOOK) {
-                this.plugin.getLog().sendFormattedMessage(player, "&a" + Languages.valueOf(this.plugin.getLog().strip(item.getItemMeta().getDisplayName().toUpperCase())).getLangName() + " Selected..");
-                this.plugin.getPlayers().setLanguage(player.getUniqueId(), Languages.valueOf(this.plugin.getLog().strip(item.getItemMeta().getDisplayName().toUpperCase())).getLangName());
+                Language lang = Language.valueOf(this.plugin.getLog().strip(item.getItemMeta().getDisplayName().toUpperCase()));
 
-                // TODO: Handle Language Item.
-                //this.plugin.log.sendFormattedMessage(player, "&cHandle the Language Translation Change.");
+                this.plugin.getLog().sendFormattedMessage(player, "&aYou have successfully selected &6" + lang.getName() + " &a(&6" + lang.getCode().toUpperCase() + "&a).");
+
+                if (this.plugin.getConfig().getBoolean("LogMessages")) {
+                    this.plugin.getLog().logInfo(player.getDisplayName() + " has chosen " + lang.getName() + " (" + lang.getCode().toUpperCase() + ") as their language.");
+                }
+
+                this.plugin.getPlayers().setLanguage(player.getUniqueId(), lang.getName().toUpperCase());
             }
 
             player.closeInventory();

@@ -1,10 +1,15 @@
 package uk.co.samuelzcloud.dev.plugins.ChatTranslator.Listeners;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import uk.co.samuelzcloud.dev.plugins.ChatTranslator.ChatTranslator;
 
 /**
@@ -19,7 +24,7 @@ public class JoinListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
